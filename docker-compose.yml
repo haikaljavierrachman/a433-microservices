@@ -1,0 +1,37 @@
+# Versi Docker Compose
+version: '3.7'
+
+# Mendefinisikan Service yang akan dijalankan
+services:
+  # Mendefinisikan service item-app
+  item-app:
+    # Menentukan nama container
+    container_name: app
+    # image yang diambil dari docker hub
+    image: haikaljavierrachman/item-app:v1
+    # port forwarding / port mapping ke port 80 pada host
+    ports:
+      - "80:8080"
+    # Mendefinisikan item-app berjalan saat item-db sudaah berjalan 
+    depends_on:
+      - item-db
+    # Menetapkan restart policy
+    restart: always
+
+  # Mendefinisikan service item-db
+  item-db:
+    # Menentukan nama container
+    container_name: db
+    # Image yang digunakan
+    image: mongo:3
+    # Mounting Volume
+    volumes:
+      - app-db:/data/db
+    # Menetapkan restart policy
+    restart: always
+
+# Membuat volume
+volumes:
+  app-db:
+
+
