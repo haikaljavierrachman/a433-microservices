@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+# mendefinisikan Object Deployment
+kind: Deployment
+# Menambahkan metadata name dan labels
+metadata:
+  name: karsajob-be
+  labels:
+    app: microservices
+    tier: backend
+# Mendefinisikan behavior Deployment
+spec:
+  # menentukan jumlah pod
+  replicas: 1
+  # Label selector pod
+  selector:
+    matchLabels:
+      tier: backend
+  # Mendefinisikan template pod yang akan di jalankan
+  template:
+    # Menambahkan metadata name dan label pada pod
+    metadata:
+      labels:
+        app: microservices
+        tier: backend
+    # Mendefinisikan spec dari pod
+    spec:
+      # Mendefinsikan container yang akan di jalankan di dalam pod
+      containers:
+        # Mendefinisikan nama container
+        - name: server
+          # Mendefinisikan image yang akan dipakai oleh container
+          image: ghcr.io/haikaljavierrachman/karsajobs:latest
+          # Mendefinisikan port yang akan diexpose oleh container
+          ports:
+            - containerPort: 8080
+          # mendefinisikan envoronment yang diperlukan oleh container
+          env:
+            # Mendefinisikan port apliksi
+            - name: APP_PORT
+              value: "8080"
+            # Mendefinisikan Host database(mongo)
+            - name: MONGO_HOST
+              value: mongo://$(MONGO_SERVICE_HOST):$(MONGO_SERVICE_PORT_MONGO)
+            # Mendefinisikan username database(mongo) yang diambil dari secret
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  - name: mongo-secret
+                    key: MONGO_ROOT_USERNAME
+            # Mendefinisikan password database(mongo) yang diambil dari secret
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  - name: mongo-secret
+                    key: MONGO_ROOT_PASSWORD

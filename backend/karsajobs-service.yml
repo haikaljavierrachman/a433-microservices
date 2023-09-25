@@ -1,0 +1,16 @@
+apiVersion: v1
+# Mendefinisikan Object service
+kind: Service
+# menambaahkan metadata name dan labels
+metadata:
+  name: karsajob-be
+  labels:
+    app: microservices
+# Mendefinisikan behavior service
+spec:
+  # Mendefinisikan port yang di expose oleh service
+  ports:
+    - port: 8080
+  # Mendefinisikan route traffic ke pod
+  selector:
+    tier: backend
