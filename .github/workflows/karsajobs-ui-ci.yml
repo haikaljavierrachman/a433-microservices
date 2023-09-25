@@ -3,10 +3,10 @@ name: karsajobs-ui-ci
 on: 
   push:
     branches: 
-      - 'karsajobs-ui'
+      - karsajobs-ui
   pull_request:
     branches: 
-      - 'karsajobs-ui'
+      - karsajobs-ui
 
 jobs:
   check:
