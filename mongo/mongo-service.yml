@@ -1,0 +1,20 @@
+apiVersion: v1
+# Mendefinisikan Object Service
+kind: Service
+# Menambah metadata name dan labels
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+# Mendefinisikan behavior dari service
+spec:
+  # Mendefinisikan route traffic service
+  selector:
+    app: mongo
+    tier: backend
+  # Mendefinisikan port yang diexpose service
+  ports:
+    - port: 27017
+      name: mongo
+  # Mendefinisikan bahwa ini adalah handless service
+  clusterIP: none

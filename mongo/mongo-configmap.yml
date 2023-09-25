@@ -1,0 +1,11 @@
+apiVersion: v1
+# Merepresentasikan Object ConfigMap
+kind: ConfigMap
+# Menambahkan metadata name
+metadata:
+  name: mongo-config
+# Mendefinisikan data konfigurasi
+data:
+  mongo.conf: |
+    storage:
+      dbPath: /data/db

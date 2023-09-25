@@ -1,0 +1,39 @@
+apiVersion: v1
+# MEndefinisikan Object Persistent Volume
+kind: PersistentVolume
+# Menambahkan metadata name dan label
+metadata:
+  name: mongo-pv
+  labels:
+    type: local
+# Mendefinisikan spec dari Persistent Volume
+spec:
+  storageClassName: manual
+  # Menentukan kapasitas persistent volume
+  capacity:
+    storage: 1Gi
+  # Mendefinisikan akses dari volume
+  accessModes:
+    - ReadWriteOnce
+  # Representasi directory
+  hostPath:
+    path: "/mnt/data/mongo"
+
+---
+apiVersion: v1
+# Mendefinisikan Object Persistent Volume Claim
+kind: PersistentVolumeClaim
+# Menambah metadata name dan labels
+metadata:
+  name: mongo-pvc
+  labels:
+    app: mongo
+# Mendefinisikan request volume
+spec:
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 1Gi
+  # Mendefinisikan akses mode volume
+  accessModes:
+    - ReadWriteOnce

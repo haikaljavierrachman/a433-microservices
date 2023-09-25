@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+# Mendefinisikan Object Statefulset
+kind: StatefulSet
+# Menambahkan metadata name dan labels
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+# Mendefinisikan identistas pod
+spec:
+  # Mendefinisikan label query untuk replica count
+  selector:
+    matchLabels:
+      app: mongo
+      tier: backend
+  # Mendefinisikan service yang di gunakan oleh statefulset
+  serviceName: mongo
+  # Mendefinisikan durasi pod ketika ready
+  minReadySeconds: 10
+  # Mendefinisikan jumlah replika pod
+  replicas: 1
+  # mendefinisikan deskripsi dari pod yang akan dibuat
+  template:
+    # Menambahkan metadata labels ke pod yang akan dibuat
+    metadata:
+      labels:
+        app: mongo
+    # mendefinisikan spek dari pod yang akan dibuat
+    spec:
+      # mendefinisikan durasi pod yang perlu di terminate
+      terminationGracePeriodSeconds: 10
+      # Mendefinisikan container yang akan dimasukan ke dalam pod yang akan dibuat
+      containers:
+        # Mendefinisikan nama container
+        - name: mongo
+          # Mendefinisikan image yang akan digunakan oleh container
+          image: mongo:3
+          # Menambahkan environment variable yang dibutuhkan oleh container
+          env:
+            # Menentukan env untuk lokasi username file
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME
+            # Menentukan env untuk lokasi file password
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD
+          # Mendefinisikan port yang kan di expose oleh container
+          ports:
+            - containerPort: 27017
+              name: mongo
+          # Mendefinisikan lokasi mount antara volume dan container file
+          volumeMounts:
+            # mendefinisikan mount lokasi data mongo dengan persistent volume
+            - name: mongo-persistent-volume
+              mountPath: /data/db
+            # Mendefinisikan mount file konfigurasi mongo dengan configmap
+            - name: mongo-config
+              mountPath: /config
+            # Mendifinisikan mount file kredential mongo dengan secret file
+            - name: mongo-secret
+              mountPath: /etc/mongo-credentials
+  # Mendefinisikan Volume yang akan di mount
+  volumes:
+    # mendefinisikan persistent volume claim untuk persistent volume
+    - name: mongo-persistent-volume
+      persistentVolumeClaim:
+        claimName: mongo-pvc
+    # Mendefinisikan file configMap
+    - name: mongo-config
+      configMap:
+        name: mongo-config
+        items:
+          - key: mongo.conf
+            path: mongod.conf
+    # Mendefinisikan secret
+    - name: mongo-secret
+      valueFrom:
+        secretKeyRef:
+          - name: mongo-secret
