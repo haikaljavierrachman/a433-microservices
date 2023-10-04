@@ -1,5 +1,5 @@
 # Menentukan base image
-FROM node:14-alpine
+FROM node:16-alpine
 
 # Menentukan working directory
 WORKDIR /app
