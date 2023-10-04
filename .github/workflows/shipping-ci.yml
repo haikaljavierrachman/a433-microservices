@@ -1,0 +1,30 @@
+name: shipping-ci
+
+on:
+  push:
+    branches:
+      - shipping-service
+  pull_request:
+    branches:
+      - shipping-service
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.SECRET_TOKEN }}
+
+      - name: Build and Push
+        id: docker-build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/haikaljavierrachman/shipping:latest
